@@ -14,15 +14,37 @@ app.use(bodyParser.json());
 app.get("/getAccessToken", async function (req, res) {
   console.log(req.query.code);
   const params =
-    "?client _id=" +
+    "?client_id=" +
     CLIENT_ID +
     "&client_secret=" +
     CLIENT_SECRET +
     "&code=" +
     req.query.code;
-  await fetch("https://github.com/login/oauth/authorize?client_id");
+  await fetch("https://github.com/login/oauth/access_token" + params, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+    },
+  }).then(async (response) => {
+    const data = await response.json();
+    console.log(data);
+    return res.send(data);
+  });
 });
 
-app.listen(4000, () => {
+app.get("/getUserData", async function (req, res) {
+  await fetch("https://api.github.com/user", {
+    method: "GET",
+    headers: {
+      Authorization: req.get("Authorization"),
+    },
+  }).then(async (response) => {
+    const data = await response.json();
+    console.log(data);
+    return res.send(data);
+  });
+});
+
+app.listen(8000, () => {
   console.log("cors server listentening");
 });
