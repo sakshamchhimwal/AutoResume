@@ -7,7 +7,7 @@ const CLIENT_ID = "a12b9b0d5b4c0a8f85b3";
 function App() {
   function loginWithGithub() {
     window.location.assign(
-      "https://github.com/login/auth/authorize?cliend_id" + CLIENT_ID
+      "https://github.com/login/oauth/authorize?client_id=" + CLIENT_ID
     );
   }
 
