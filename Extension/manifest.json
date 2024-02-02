@@ -1,0 +1,37 @@
+{
+    "manifest_version": 2,
+    "name": "Auto Resume",
+    "version": "1.0",
+    "description": "Description of your extension",
+    "icons": {
+        "128": "icons/logo.png"
+    },
+    "browser_action": {
+        "default_icon": "logo.png",
+        "default_popup": "popup/popup.html"
+    },
+    "permissions": [
+        "activeTab",
+        "storage",
+        "http://localhost:3000/",
+        "http://localhost:3001/"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "content/content.js"
+            ]
+        }
+    ],
+    "background": {
+        "scripts": [
+            "background/background.js"
+        ],
+        "persistent": false // Set to true if you need a persistent background script
+    },
+    "options_page": "options/options.html",
+    "manifest_url": "manifest.json"
+}

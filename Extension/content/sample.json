@@ -1,0 +1,28 @@
+{
+    "projects": [
+        {
+            "title": "Project 1",
+            "points": [
+                "Point 1 for Project 1",
+                "Point 2 for Project 1",
+                "Point 3 for Project 1"
+            ]
+        },
+        {
+            "title": "Project 2",
+            "points": [
+                "Point 1 for Project 2",
+                "Point 2 for Project 2",
+                "Point 3 for Project 2"
+            ]
+        },
+        {
+            "title": "Project 3",
+            "points": [
+                "Point 1 for Project 3",
+                "Point 2 for Project 3",
+                "Point 3 for Project 3"
+            ]
+        }
+    ]
+}
