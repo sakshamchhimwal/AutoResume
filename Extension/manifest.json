@@ -30,7 +30,7 @@
         "scripts": [
             "background/background.js"
         ],
-        "persistent": false // Set to true if you need a persistent background script
+        "persistent": false
     },
     "options_page": "options/options.html",
     "manifest_url": "manifest.json"
