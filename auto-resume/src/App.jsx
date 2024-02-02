@@ -5,7 +5,12 @@ import "./App.css";
 
 const CLIENT_ID = "a12b9b0d5b4c0a8f85b3";
 function App() {
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const codeParam = urlParams.get("code");
+    console.log(codeParam);
+  }, []);
   function loginWithGithub() {
     window.location.assign(
       "https://github.com/login/oauth/authorize?client_id=" + CLIENT_ID
