@@ -2,10 +2,14 @@ import { useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
+import Login from "./Login";
+import Profile from "./Profile";
 
 const CLIENT_ID = "a12b9b0d5b4c0a8f85b3";
 function App() {
   const [render, setRender] = useState(false);
+  const [userData, setUserData] = useState(null);
+  console.log(userData);
   useEffect(() => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
@@ -44,7 +48,7 @@ function App() {
           return await response.json();
         })
         .then((data) => {
-          console.log(data);
+          setUserData(data);
         });
     }
   }
@@ -56,7 +60,10 @@ function App() {
 
   return (
     <>
-      <button onClick={loginWithGithub}>login with github</button>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        {!userData && <Login handleLoginClick={loginWithGithub} />}
+        {userData && <Profile userData={userData} />}
+      </div>
     </>
   );
 }
