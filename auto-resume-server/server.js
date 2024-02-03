@@ -45,6 +45,20 @@ app.get("/getUserData", async function (req, res) {
   });
 });
 
+app.get("/getRepos/:username", async function (req, res) {
+  await fetch(`https://api.github.com/users/${req.params.username}/repos`, {
+    method: "GET",
+    headers: {
+      Authorization: req.get("Authorization"),
+    },
+  }).then(async (response) => {
+    const data = await response.json();
+    console.log("repos ", data);
+    return res.send(data);
+  });
+});
+
 app.listen(8000, () => {
   console.log("cors server listentening");
 });
+// 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
