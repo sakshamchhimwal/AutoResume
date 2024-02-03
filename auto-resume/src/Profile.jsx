@@ -312,7 +312,7 @@ const Profile = ({ userData }) => {
               onChange={(e) => {
                 setCourses(e.target.value);
               }}
-              placeholder="DSA, CA, DBMS, etc."
+              placeholder="Databases & Information Systems, Artificial Intelligence, Neural Net...s"
               type="text"
               name="address"
               id="courses"
