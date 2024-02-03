@@ -59,6 +59,6 @@ app.get("/getRepos/:username", async function (req, res) {
 });
 
 app.listen(8000, () => {
-  console.log("cors server listentening");
+  console.log("Server running on port 8000");
 });
 // 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

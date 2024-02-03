@@ -15,11 +15,10 @@ const Login = ({ handleLoginClick }) => {
             </label>
           </div>
           <br />
+          <h3>Craft the perfect resume for every job</h3>
           <p>
-            We are building a Chrome Extension (basically an exten- sion to a
-            Web-Dev project) which will help to streamline the process of
-            automatically generating resumes that are curated as per the job
-            requirement and the company’s vision.
+            Our Auto Resume Extension helps you to tailor your resume for the
+            job description you are applying for with the help of few clicks.
           </p>
           <br />
           <br />
