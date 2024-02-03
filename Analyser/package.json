@@ -8,16 +8,23 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.2.0",
+    "@octokit/request": "^8.1.6",
+    "@octokit/rest": "^20.0.2",
+    "@types/axios": "^0.14.0",
+    "@types/dotenv": "^8.2.0",
     "@types/http-errors": "^2.0.4",
     "@types/mongoose": "^5.11.97",
+    "axios": "^1.6.7",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
+    "dotenv": "^16.4.1",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "mongoose": "^8.1.1",
     "morgan": "~1.9.1",
-    "nodemon": "^3.0.3"
+    "nodemon": "^3.0.3",
+    "octokit": "^3.1.2"
   },
   "type": "module"
 }
