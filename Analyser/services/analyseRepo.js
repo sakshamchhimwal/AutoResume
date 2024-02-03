@@ -6,9 +6,14 @@ import analyseReadme from "../analysers/readme.analyser.js";
 
 const files = new Set(["requirements.txt", "package.json"]);
 
-const getTechStack = async (auth, fileURL) => {};
+const getTechStack = async (auth, allFiles) => {
+	const filterFiles = allFiles.tree.map((ele) => {
+		return { path: ele.path, url: ele.url };
+	});
+	
+};
 
-export const getReadMeCrux = async (auth, fileURL) => {
+const getReadMeCrux = async (auth, fileURL) => {
 	const getReadMeDets = await axios.get(fileURL, {
 		headers: {
 			Authorization: `Bearer ${auth}`,
@@ -20,7 +25,7 @@ export const getReadMeCrux = async (auth, fileURL) => {
 	contents.forEach((ele) => {
 		resStr = resStr + atob(ele);
 	});
-    console.log(resStr);
+	console.log(resStr);
 	return analyseReadme(resStr);
 };
 
@@ -45,13 +50,22 @@ const getAllFiles = async (auth, username, repoName) => {
 		}
 	);
 	const allFiles = [];
+	let readMeCrux = "";
 	files.forEach((ele) => {
 		if (ele.path.includes("readme") || ele.path.includes("README")) {
-			getReadMeCrux(auth, ele.url);
+			readMeCrux = getReadMeCrux(auth, ele.url);
 		} else {
 			allFiles.push({ path: ele.path, url: ele.url });
 		}
 	});
+	return { allFiles, readMeCrux };
 };
 
-export const analyseRepo = async (auth, repoURL) => {};
+export const analyseRepo = async (auth, repoURL) => {
+	const splitURL = repoURL.split("/");
+	const username = splitURL[3];
+	const repoName = splitURL[4];
+	const res = getAllFiles(auth, username, repoName);
+	const repoLangs = getRepoLanguages(auth, username, repoURL);
+	return;
+};
