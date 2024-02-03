@@ -51,7 +51,7 @@ function updatePopup(data) {
 
 function submitForm(originalData, editFormContainer) {
     const updatedData = { projects: [] };
-    
+
 
     originalData.projects.forEach((project, index) => {
         const title = document.querySelector(`input[name=title_${index}]`).value;
@@ -69,12 +69,14 @@ function submitForm(originalData, editFormContainer) {
 }
 
 function sendUpdatedDataToBackend(updatedData) {
+    const token = localStorage.getItem('accessToken');
+
     fetch('http://localhost:3000/analyzer/make', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(updatedData)
+        body: JSON.stringify({ updatedData: updatedData, token: token })
     })
         .then(response => {
             if (!response.ok) {
