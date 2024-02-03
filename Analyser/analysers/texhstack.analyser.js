@@ -57,10 +57,12 @@ export async function FileGetter(files) {
 	return response.text();
 }
 
-export async function AnalyseFiles(files) {
+export async function AnalyseFiles(code) {
+	// console.log("RecievedCode",code);
 	const parts = [
 		{
-			text: `This is the file provided\n${files}\n\n\nAnalyse this file for coding style insights ans tech stack used.\n\nStrictly: Use only the provided code samples for analysis. Analyse each file. Do not come up with your own assumptions. Provide with **3** insights no less no more.\n\nOutput format \n\n\`\`\`[\n\t{\n\t\tfilename:"X",\n\t\tinsights:[insight1, insight2, insight3],\n\t\ttechStack: [tech1, tech2, tech3, tech4, ...]\n\t}\n]\`\`\`\n \`\`\`\nExample Output\n[\n\t{\n\t\tfilename: "myapp/flaskapp.py",\n\t\tinsights: [\n\t\t\t"The code follows the PEP8 coding conventions, such as using snake_case for variable and function names, and indentations for blocks of code.",\n\t\t\t"The code uses the Flask microframework for creating the web application, which is known for its simplicity and ease of use.",\n\t\t\t"The code uses the Flask-Login extension to manage user authentication and sessions.",\n\t\t],\n\t\ttechStack: ["Python", "Flask", "Flask-Login", "SQLAlchemy", "Flask-Bcrypt", "dotenv"]\n\t}\n]\n\`\`\``,
+			text: `This is the code provided\n${code}\n\n\nAnalyse this code for coding style insights ans tech stack used.\n\nStrictly: Use only the provided code samples for analysis. Analyse each file. Do not come up with your own assumptions. Provide with **3** insights no less no more. Include all the prominent tech stack that is employed in the application.
+			\n\nOutput format \n\n\`\`\`[\n\t{\n\t\tinsights:[insight1, insight2, insight3],\n\t\ttechStack: [tech1, tech2, tech3, tech4, ...]\n\t}\n]\`\`\`\n \`\`\`\nExample Output\n[\n\t{\n\t\tinsights: [\n\t\t\t"The code follows the PEP8 coding conventions, such as using snake_case for variable and function names, and indentations for blocks of code.",\n\t\t\t"The code uses the Flask microframework for creating the web application, which is known for its simplicity and ease of use.",\n\t\t\t"The code uses the Flask-Login extension to manage user authentication and sessions.",\n\t\t],\n\t\ttechStack: ["Python", "Flask", "Flask-Login", "SQLAlchemy", "Flask-Bcrypt", "dotenv"]\n\t}\n]\n\`\`\``,
 		},
 	];
 
@@ -70,7 +72,9 @@ export async function AnalyseFiles(files) {
 		safetySettings,
 	});
 
+	// console.log(parts);
+
 	const response = result.response;
-	console.log(response.text());
+	// console.log("Tech Stack Found",response.text());
 	return response.text();
 }
