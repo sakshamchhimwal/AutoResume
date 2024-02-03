@@ -35,22 +35,36 @@ function sendToBackend(textContent) {
   const useLocalFile = true;
   if (useLocalFile) {
     // Fetch data from local sample.json file
-    fetch("./sample.json")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        // Process the data from the local file and pass it to the popup
-        console.log(data.projects);
-        updatePopup(data);
-      })
-      .catch((error) => {
-        console.error("Error reading data from sample.json:", error);
-      });
+    const responseData = {
+        projects: [
+            {
+                title: 'Project 1',
+                points: [
+                    'Point 1 for Project 1',
+                    'Point 2 for Project 1',
+                    'Point 3 for Project 1',
+                ],
+            },
+            {
+                title: 'Project 2',
+                points: [
+                    'Point 1 for Project 2',
+                    'Point 2 for Project 2',
+                    'Point 3 for Project 2',
+                ],
+            },
+            {
+                title: 'Project 3',
+                points: [
+                    'Point 1 for Project 3',
+                    'Point 2 for Project 3',
+                    'Point 3 for Project 3',
+                ],
+            },
+        ],
+    };
 
+    updatePopup(responseData);
     return;
   }
 
