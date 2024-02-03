@@ -107,13 +107,18 @@ router.post("/build", async (req, res, next) => {
 		);
 		currResume = JSON.parse(currResume.replaceAll("`", "").replaceAll("json", ""));
 		resume.push({
-			projectname,
-			currResume,
+			title:projectname,
+			technologies:currResume.skills,
+			points: currResume.projectDetails
 		});
 	}
 	console.log(resume);
-	return res.send({ Resume: resume }).status(200);
+	return res.send({ projects: resume }).status(200);
 });
+
+router.post("/make",async (req,res,next)=>{
+	
+})
 
 router.get("/test", async (req, res, next) => {
 	const analysedReadme = await analyseRepo(

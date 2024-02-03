@@ -36,6 +36,6 @@ app.use(function (err, req, res, next) {
 	res.render("error");
 });
 
-app.use("/", indexRouter);
+app.use("/analyzer", indexRouter);
 
 export default app;
