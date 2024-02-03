@@ -44,6 +44,7 @@ function sendToBackend(textContent) {
                     'Point 2 for Project 1',
                     'Point 3 for Project 1',
                 ],
+                technologies: ['React', 'Node.js', 'MongoDB'],
             },
             {
                 title: 'Project 2',
@@ -52,6 +53,7 @@ function sendToBackend(textContent) {
                     'Point 2 for Project 2',
                     'Point 3 for Project 2',
                 ],
+                technologies: ['Angular', 'Express', 'MySQL'],
             },
             {
                 title: 'Project 3',
@@ -60,9 +62,12 @@ function sendToBackend(textContent) {
                     'Point 2 for Project 3',
                     'Point 3 for Project 3',
                 ],
+                technologies: ['Vue.js', 'Django', 'PostgreSQL'],
             },
         ],
+        skills: ['JavaScript', 'React', 'Node.js', 'HTML5', 'CSS3']
     };
+
 
     updatePopup(responseData);
     return;

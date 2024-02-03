@@ -14,13 +14,17 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     }
 });
 
-// Function to update the popup content
+
 function updatePopup(data) {
     const popupContent = document.getElementById('popup-content');
+    const responseDataTextarea = document.getElementById('responseDataTextarea');
 
-    if (popupContent) {
+    if (popupContent && responseDataTextarea) {
         // Clear previous content
         popupContent.innerHTML = '';
+
+        // Display the responseData in the textarea
+        responseDataTextarea.value = JSON.stringify(data, null, 2);
 
         // Iterate through projects and points and add to the popup
         data.projects.forEach(project => {
@@ -38,3 +42,27 @@ function updatePopup(data) {
         });
     }
 }
+
+document.getElementById('editSubmit').addEventListener('click', function () {
+    const editedData = document.getElementById('responseDataTextarea').value;
+
+    // Send the edited data to another route of the backend
+    fetch('http://localhost:3000/analyze/final', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: editedData,
+    })
+        .then(response => response.blob()) // Convert response to a Blob
+        .then(blob => {
+            // Create a download link for the PDF file
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = 'Resume.pdf'; // Set the desired file name
+            link.click();
+        })
+        .catch(error => {
+            console.error('Error sending data to backend:', error);
+        });
+});
