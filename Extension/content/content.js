@@ -1,4 +1,9 @@
-// content.js
+// Listen for messages from the popup
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  if (message.action === "runFunction" && isLinkedInJobsPage()) {
+    parser();
+  }
+});
 
 function parser() {
   let textContent = ""; // Initialize an empty string
@@ -32,7 +37,7 @@ function parser() {
 
 function sendToBackend(textContent) {
   /* using local files */
-  const useLocalFile = true;
+  const useLocalFile = false;
   if (useLocalFile) {
     // Fetch data from local sample.json file
     const responseData = {
@@ -74,20 +79,15 @@ function sendToBackend(textContent) {
   /*--------------*/
   const token = localStorage.getItem("accessToken");
 
-  fetch("http://localhost:3000/analyzer/parse", {
+  fetch("http://localhost:3000/analyzer/build", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ data: textContent, token: token }),
-  })
-    .then((response) => response.json())
-    .then((responseData) => {
-      updatePopup(responseData);
-    })
-    .catch((error) => {
-      console.error("Error sending data to backend:", error);
-    });
+    body: JSON.stringify({ token: token, JD: textContent }),
+  }).catch((error) => {
+    console.error("Error sending data to backend:", error);
+  });
 }
 
 function updatePopup(responseData) {
@@ -99,10 +99,3 @@ function updatePopup(responseData) {
 function isLinkedInJobsPage() {
   return /^https:\/\/www.linkedin.com\/jobs\//.test(window.location.href);
 }
-
-// Listen for messages from the popup
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-  if (message.action === "runFunction" && isLinkedInJobsPage()) {
-    parser();
-  }
-});

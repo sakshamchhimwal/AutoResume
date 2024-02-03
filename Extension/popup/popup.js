@@ -69,7 +69,7 @@ function submitForm(originalData, editFormContainer) {
 }
 
 function sendUpdatedDataToBackend(updatedData) {
-    fetch('http://localhost:3000/analyze/final', {
+    fetch('http://localhost:3000/analyzer/make', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
