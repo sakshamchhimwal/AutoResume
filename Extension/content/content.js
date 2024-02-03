@@ -73,13 +73,14 @@ function sendToBackend(textContent) {
     }
 
     /*--------------*/
+    const token = localStorage.getItem('accessToken');
 
     fetch("http://localhost:3000/analyzer/parse", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ data: textContent }),
+        body: JSON.stringify({ data: textContent, token: token }),
     })
         .then((response) => response.json())
         .then((responseData) => {
@@ -99,13 +100,6 @@ function updatePopup(responseData) {
 function isLinkedInJobsPage() {
     return /^https:\/\/www.linkedin.com\/jobs\//.test(window.location.href);
 }
-
-// Run the parser when the page is fully loaded
-// document.addEventListener("DOMContentLoaded", function () {
-//     if (isLinkedInJobsPage()) {
-//         parser();
-//     }
-// });
 
 // Listen for messages from the popup
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
