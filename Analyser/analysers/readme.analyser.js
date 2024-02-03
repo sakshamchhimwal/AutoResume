@@ -60,7 +60,8 @@ async function analyseReadme(readmeContents) {
       
       **Do not come up with your own assumptions use only the data provided.**
       
-      Strictly Limit the **Skills to 6** and **Feature to 10** in the ouptut.
+      Strictly Limit the Skills to **6** and Feature to **10** in the ouptut.
+	  If the skills and feautres are less then it is okay.
       Do not repeat the features.
       If you are not able to identify 10 features do not make up on your own reduce the number of features.
       Try to include as many skills as possible. Limit the skills to Technical side only.`,

@@ -19,45 +19,76 @@ router.get("/", function (req, res, next) {
 });
 
 router.post("/register", async (req, res, next) => {
-	const { token } = req.body;
-	const userDetails = await getGitHubDetails(token);
-	const { username } = userDetails;
-	const newUser = await userModel.create({ username: username });
-	if (newUser) {
-		return res.send({ message: "New user created successfuly" });
+	try {
+		const { token } = req.body;
+		const userDetails = await getGitHubDetails(token);
+		const { login } = userDetails;
+		console.log(login);
+		const newUser = await userModel.create({ username: login });
+		if (newUser) {
+			return res.send({ message: "New user created successfuly" });
+		}
+		return res.send({ message: "New user not created" });
+	} catch (err) {
+		console.log(err);
+		return res.send({ message: "New user not created" });
 	}
-	return res.send({ message: "New user not created" });
 });
 
 router.post("/analyse", async (req, res, next) => {
 	const { token, repoURL1, repoURL2, repoURL3 } = req.body;
 	const userDetails = await getGitHubDetails(token);
-	const { username } = userDetails;
-	const userExist = await doesUserExist(username);
+	const { login } = userDetails;
+	const userExist = await doesUserExist(login);
 	if (!userExist) {
 		return res.send({ message: "user does not exist" }).status(403);
 	}
 	const urls = [repoURL1, repoURL2, repoURL3];
-	for (const url in urls) {
-		const split = url.split("/");
-		const repoName = split[4];
-		const repoAnalysis = await analyseRepo(token, url);
-		const update = await userModel.findOneAndUpdate(
-			{ username: username },
-			{
-				$push: {
-					projects: {
-						projectname: repoName,
-						projectdesc: repoAnalysis,
+	const updates = [];
+	for (const url of urls) {
+		try {
+			const splitURL = url.split("/");
+			const repoName = splitURL[4];
+			const repoAnalysis = await analyseRepo(token, url);
+			const skills = [];
+			const projInsights = [];
+			repoAnalysis.readMeAnalysis.skills.forEach((ele) => {
+				skills.push(ele);
+			});
+			repoAnalysis.techStack.forEach((ele) => {
+				console.log(ele);
+				ele?.techStack?.forEach((ele) => {
+					skills.push(ele);
+				});
+			});
+			repoAnalysis.readMeAnalysis.features.forEach((ele) => {
+				projInsights.push(ele);
+			});
+			repoAnalysis.techStack.forEach((ele) => {
+				ele?.insights?.forEach((ins) => {
+					projInsights.push(ins);
+				});
+			});
+			console.log({ repoName, skills, projInsights });
+			const update = await userModel.findOneAndUpdate(
+				{ username: login },
+				{
+					$push: {
+						projects: {
+							skills: skills,
+							projectname: repoName,
+							projectdesc: projInsights,
+						},
 					},
-				},
-			}
-		);
-		if (update.isModified()) {
-			return res.send(update.projects).status(200);
+				}
+			);
+			updates.push(update);
+		} catch (err) {
+			console.log(err);
+			res.send({ message: "Error in parsing" });
 		}
-		return res.send({ message: "Some issue occures" }).status(500);
 	}
+	res.send({ message: updates.toString() });
 });
 
 router.get("/test", async (req, res, next) => {
