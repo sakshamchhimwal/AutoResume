@@ -2,6 +2,7 @@ import express from "express";
 import { analyseRepo } from "../services/analyseRepo.js";
 import userModel from "../models/user.js";
 import { getGitHubDetails } from "../utils/getGithubDetails.js";
+import { generateResume } from "../analysers/build.resume.js";
 const router = express.Router();
 
 const doesUserExist = async (userName) => {
@@ -89,6 +90,29 @@ router.post("/analyse", async (req, res, next) => {
 		}
 	}
 	res.send({ message: updates.toString() });
+});
+
+router.post("/build", async (req, res, next) => {
+	const { JD, token } = req.body;
+	const { login } = await getGitHubDetails(token);
+	const userDets = await userModel.findOne({ username: login });
+	const allProjects = userDets.projects;
+	const resume = [];
+	for (const proj of allProjects) {
+		const { projectname, projectdesc, skills } = proj;
+		let currResume = await generateResume(
+			JD,
+			projectdesc.toString(),
+			skills.toString()
+		);
+		currResume = JSON.parse(currResume.replaceAll("`", "").replaceAll("json", ""));
+		resume.push({
+			projectname,
+			currResume,
+		});
+	}
+	console.log(resume);
+	return res.send({ Resume: resume }).status(200);
 });
 
 router.get("/test", async (req, res, next) => {
