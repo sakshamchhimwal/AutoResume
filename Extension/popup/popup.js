@@ -15,54 +15,94 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 });
 
 
+// Function to update the popup content with the form
 function updatePopup(data) {
-    const popupContent = document.getElementById('popup-content');
-    const responseDataTextarea = document.getElementById('responseDataTextarea');
+    const editFormContainer = document.getElementById('editFormContainer');
 
-    if (popupContent && responseDataTextarea) {
+    if (editFormContainer) {
         // Clear previous content
-        popupContent.innerHTML = '';
+        editFormContainer.innerHTML = '';
 
-        // Display the responseData in the textarea
-        responseDataTextarea.value = JSON.stringify(data, null, 2);
+        data.projects.forEach((project, index) => {
+            const titleInput = document.createElement('input');
+            titleInput.type = 'text';
+            titleInput.value = project.title;
+            titleInput.name = `title_${index}`;
+            editFormContainer.appendChild(titleInput);
 
-        // Iterate through projects and points and add to the popup
-        data.projects.forEach(project => {
-            const projectTitle = document.createElement('h3');
-            projectTitle.textContent = project.title;
-            popupContent.appendChild(projectTitle);
+            const pointsTextarea = document.createElement('textarea');
+            pointsTextarea.value = project.points.join('\n');
+            pointsTextarea.name = `points_${index}`;
+            editFormContainer.appendChild(pointsTextarea);
 
-            const pointsList = document.createElement('ul');
-            project.points.forEach(point => {
-                const pointItem = document.createElement('li');
-                pointItem.textContent = point;
-                pointsList.appendChild(pointItem);
-            });
-            popupContent.appendChild(pointsList);
+            const technologiesInput = document.createElement('input');
+            technologiesInput.type = 'text';
+            technologiesInput.value = project.technologies.join(', ');
+            technologiesInput.name = `technologies_${index}`;
+            editFormContainer.appendChild(technologiesInput);
         });
+
+        const submitButton = document.createElement('button');
+        submitButton.type = 'button';
+        submitButton.textContent = 'Edit & Submit';
+        submitButton.addEventListener('click', () => submitForm(data, editFormContainer));
+        editFormContainer.appendChild(submitButton);
     }
 }
 
-document.getElementById('editSubmit').addEventListener('click', function () {
-    const editedData = document.getElementById('responseDataTextarea').value;
+function submitForm(originalData, editFormContainer) {
+    const updatedData = { projects: [] };
+    
 
-    // Send the edited data to another route of the backend
+    originalData.projects.forEach((project, index) => {
+        const title = document.querySelector(`input[name=title_${index}]`).value;
+        const points = document.querySelector(`textarea[name=points_${index}]`).value.split('\n');
+        const technologies = document.querySelector(`input[name=technologies_${index}]`).value.split(',').map(item => item.trim());
+
+        updatedData.projects.push({
+            title: title,
+            points: points,
+            technologies: technologies
+        });
+    });
+
+    sendUpdatedDataToBackend(updatedData);
+}
+
+function sendUpdatedDataToBackend(updatedData) {
     fetch('http://localhost:3000/analyze/final', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
         },
-        body: editedData,
+        body: JSON.stringify(updatedData)
     })
-        .then(response => response.blob()) // Convert response to a Blob
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.blob();
+        })
         .then(blob => {
-            // Create a download link for the PDF file
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = 'Resume.pdf'; // Set the desired file name
-            link.click();
+            // Create a Blob URL for the PDF content
+            const pdfUrl = URL.createObjectURL(blob);
+
+            // Remove the form from the DOM
+            const editFormContainer = document.getElementById('editFormContainer');
+            if (editFormContainer) {
+                editFormContainer.remove();
+            }
+
+            // Add a Download PDF button
+            const downloadButton = document.createElement('a');
+            downloadButton.href = pdfUrl;
+            downloadButton.download = 'resume.pdf';
+            downloadButton.textContent = 'Download Resume PDF';
+            document.body.appendChild(downloadButton);
         })
         .catch(error => {
-            console.error('Error sending data to backend:', error);
+            console.error('Error sending updated data to backend:', error);
         });
-});
+}
+
+
