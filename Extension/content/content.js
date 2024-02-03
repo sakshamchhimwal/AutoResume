@@ -73,13 +73,14 @@ function sendToBackend(textContent) {
     }
 
     /*--------------*/
+    const token = localStorage.getItem('accessToken');
 
     fetch("http://localhost:3000/analyzer/parse", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ data: textContent }),
+        body: JSON.stringify({ data: textContent, token: token }),
     })
         .then((response) => response.json())
         .then((responseData) => {
