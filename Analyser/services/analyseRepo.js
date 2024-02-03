@@ -14,8 +14,9 @@ const getFileContents = async (auth, fileUrl) => {
 	const contents = res.data.content.split("\n");
 	let resStr = "";
 	contents.forEach((ele) => {
-		resStr = resStr + atob(ele);
+		resStr = resStr.concat(atob(ele));
 	});
+	// console.log("19:",resStr);
 	return resStr;
 };
 
@@ -64,14 +65,19 @@ const getTechStack = async (auth, allFiles) => {
 			return { path: ele.path, contents: fileContent };
 		})
 	);
-	const tech = await AnalyseFiles(fileAnalysis);
+
 	const techStack = [];
-	await Promise.all(
-		fileAnalysis.forEach(async (ele) => {
-			const res = await AnalyseFiles(ele);
-			techStack.push(res);
-		})
-	);
+
+	for (const ele of fileAnalysis) {
+		try {
+			// console.log(ele);
+			const res = await AnalyseFiles(ele.contents);
+			techStack.push({ path: ele.path, techStack: res });
+		} catch (err) {
+			// console.log(err);
+			console.log("Err in techstack");
+		}
+	}
 	// const parsedTech = await JSON.parse(tech);
 	return techStack;
 };
@@ -125,6 +131,5 @@ export const analyseRepo = async (auth, repoURL) => {
 	const readMeAnalysis = await getReadMeCrux(auth, readMeURL);
 	const repoLangs = await getRepoLanguages(auth, username, repoName);
 	const techStack = await getTechStack(auth, allFiles);
-	console.log({ readMeAnalysis, repoLangs, techStack });
-	return;
+	return { readMeAnalysis, repoLangs, techStack };
 };
