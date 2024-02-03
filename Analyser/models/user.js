@@ -2,7 +2,6 @@ import { Schema, model } from "mongoose";
 
 const User = new Schema({
 	username: Schema.Types.String,
-	firstname: Schema.Types.String,
 	skills: { type: [Schema.Types.String], default: [] },
 	projects: {
 		type: [
