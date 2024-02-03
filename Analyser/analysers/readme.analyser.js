@@ -46,7 +46,7 @@ async function analyseReadme(readmeContents) {
       1. The features of this projects.
       2. Prominent Technologies used in this project.
       
-      Outut Format
+      Strictly use this Output Format
       \`\`\`json{
           skills: [X,Y,Z],
           features: [X,Y,Z]
@@ -58,7 +58,7 @@ async function analyseReadme(readmeContents) {
       features: ["Responsive web design", "Provides real time updates for X","Reduces the time for X by Y"]
       }\`\`\`
       
-      Do not come up with your own assumptions use only the data provided.
+      **Do not come up with your own assumptions use only the data provided.**
       
       Strictly Limit the **Skills to 6** and **Feature to 10** in the ouptut.
       Do not repeat the features.
@@ -66,7 +66,6 @@ async function analyseReadme(readmeContents) {
       Try to include as many skills as possible. Limit the skills to Technical side only.`,
 		},
 	];
-
 	const result = await model.generateContent({
 		contents: [{ role: "user", parts }],
 		generationConfig,
@@ -74,7 +73,7 @@ async function analyseReadme(readmeContents) {
 	});
 
 	const response = result.response;
-	// console.log(response.text());
+	// console.log("Readme Analysis",response.text());
 	return response.text();
 }
 
