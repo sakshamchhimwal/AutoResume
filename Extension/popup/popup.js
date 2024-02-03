@@ -14,7 +14,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     }
 });
 
-
 // Function to update the popup content with the form
 function updatePopup(data) {
     const editFormContainer = document.getElementById('editFormContainer');

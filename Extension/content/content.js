@@ -100,13 +100,6 @@ function isLinkedInJobsPage() {
     return /^https:\/\/www.linkedin.com\/jobs\//.test(window.location.href);
 }
 
-// Run the parser when the page is fully loaded
-// document.addEventListener("DOMContentLoaded", function () {
-//     if (isLinkedInJobsPage()) {
-//         parser();
-//     }
-// });
-
 // Listen for messages from the popup
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     if (message.action === "runFunction" && isLinkedInJobsPage()) {
