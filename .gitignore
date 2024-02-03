@@ -133,3 +133,4 @@ dist
 .pnp.*
 
 **/logs.txt
+exampleresponse.txt
