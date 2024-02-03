@@ -1,0 +1,21 @@
+.login{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border: 1px solid #b35b71;
+    background-color: #A46877;
+    width: 30%;
+    margin-top: 10%;
+}
+
+@media only screen and (max-width: 1000px) {
+    .login {
+        width: 60%;
+        margin-top: 20%;
+    }
+  }
+
+  @media only screen and (max-width: 500px) {
+    .login {
+        width: 90%;
+        margin-top: 30%;
+    }
+  }
