@@ -79,7 +79,7 @@ function sendToBackend(textContent) {
   /*--------------*/
   const token = localStorage.getItem("accessToken");
 
-  fetch("http://localhost:3000/analyzer/build", {
+  fetch("http://localhost:3003/analyzer/build", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
