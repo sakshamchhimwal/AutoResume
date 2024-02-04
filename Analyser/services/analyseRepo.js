@@ -5,142 +5,146 @@ import analyseReadme from "../analysers/readme.analyser.js";
 import { AnalyseFiles, FileGetter } from "../analysers/texhstack.analyser.js";
 
 const getFileContents = async (auth, fileUrl) => {
-	const res = await axios.get(fileUrl, {
-		headers: {
-			Authorization: `Token ${auth}`,
-			"User-Agent": "request",
-		},
-	});
-	const contents = res.data.content.split("\n");
-	let resStr = "";
-	contents.forEach((ele) => {
-		resStr = resStr.concat(atob(ele));
-	});
-	// console.log("19:",resStr);
-	return resStr;
+  const res = await axios.get(fileUrl, {
+    headers: {
+      Authorization: `Bearer ${auth}`,
+      "User-Agent": "request",
+    },
+  });
+  const contents = res.data.content.split("\n");
+  let resStr = "";
+  contents.forEach((ele) => {
+    resStr = resStr.concat(atob(ele));
+  });
+  // console.log("19:",resStr);
+  return resStr;
 };
 
 const getTechStack = async (auth, allFiles) => {
-	const filterFiles = allFiles.map((ele) => {
-		return { path: ele.path, url: ele.url };
-	});
-	const onlyFnames = filterFiles
-		.filter((ele) => {
-			if (
-				!ele.path.includes(".json") &&
-				!ele.path.includes(".yml") &&
-				!ele.path.includes(".txt") &&
-				!ele.path.includes(".config") &&
-				!ele.path.includes(".svg") &&
-				!ele.path.includes(".png") &&
-				!ele.path.includes(".jpeg") &&
-				!ele.path.includes(".mp4") &&
-				!ele.path.includes(".webp") &&
-				!ele.path.includes(".3gp") &&
-				!ele.path.includes(".gitignore") &&
-				!ele.path.includes(".github") &&
-				!ele.path.includes("LICENSE") &&
-				!ele.path.includes("/assets/") &&
-				!ele.path.includes("README")
-			) {
-				return ele;
-			}
-		})
-		.map((ele) => {
-			return ele.path;
-		});
-	const returnedFiles = await JSON.parse(
-		(await FileGetter(onlyFnames))
-			.replaceAll("`", "")
-			.replaceAll("json", "")
-	);
-	const getFileURLs = filterFiles.filter((ele) => {
-		if (returnedFiles.includes(ele.path)) {
-			return ele;
-		}
-	});
-	const fileAnalysis = await Promise.all(
-		getFileURLs.map(async (ele) => {
-			const fileContent = await getFileContents(auth, ele.url);
-			return { path: ele.path, contents: fileContent };
-		})
-	);
+  const filterFiles = allFiles.map((ele) => {
+    return { path: ele.path, url: ele.url };
+  });
+  const onlyFnames = filterFiles
+    .filter((ele) => {
+      if (
+        !ele.path.includes(".json") &&
+        !ele.path.includes(".yml") &&
+        !ele.path.includes(".txt") &&
+        !ele.path.includes(".config") &&
+        !ele.path.includes(".svg") &&
+        !ele.path.includes(".png") &&
+        !ele.path.includes(".jpeg") &&
+        !ele.path.includes(".mp4") &&
+        !ele.path.includes(".webp") &&
+        !ele.path.includes(".3gp") &&
+        !ele.path.includes(".gitignore") &&
+        !ele.path.includes(".github") &&
+        !ele.path.includes("LICENSE") &&
+        !ele.path.includes("/assets/") &&
+        !ele.path.includes("README")
+      ) {
+        return ele;
+      }
+    })
+    .map((ele) => {
+      return ele.path;
+    });
+  const returnedFiles = await JSON.parse(
+    (await FileGetter(onlyFnames))
+      .replaceAll("`", "")
+      .replaceAll("json", "")
+      .replaceAll("'", '"')
+  );
+  const getFileURLs = filterFiles.filter((ele) => {
+    if (returnedFiles.includes(ele.path)) {
+      return ele;
+    }
+  });
+  const fileAnalysis = await Promise.all(
+    getFileURLs.map(async (ele) => {
+      const fileContent = await getFileContents(auth, ele.url);
+      return { path: ele.path, contents: fileContent };
+    })
+  );
 
-	const techStack = [];
+  const techStack = [];
 
-	for (const ele of fileAnalysis) {
-		try {
-			// console.log(ele);
-			const res = await AnalyseFiles(ele.contents);
-			techStack.push({ path: ele.path, techStack: res });
-		} catch (err) {
-			// console.log(err);
-			console.log("Err in techstack");
-		}
-	}
-	// const parsedTech = await JSON.parse(tech);
-	return techStack;
+  for (const ele of fileAnalysis) {
+    try {
+      // console.log(ele);
+      const res = await AnalyseFiles(ele.contents);
+      techStack.push({ path: ele.path, techStack: res });
+    } catch (err) {
+      // console.log(err);
+      console.log("Err in techstack");
+    }
+  }
+  // const parsedTech = await JSON.parse(tech);
+  return techStack;
 };
 
 const getReadMeCrux = async (auth, fileURL) => {
-	const getReadMeDets = await getFileContents(auth, fileURL);
-	const res = await analyseReadme(getReadMeDets);
-	return res;
+  const getReadMeDets = await getFileContents(auth, fileURL);
+  const res = await analyseReadme(getReadMeDets);
+  return res;
 };
 
 const getRepoLanguages = async (auth, username, repoName) => {
-	const res = await axios.get(
-		`https://api.github.com/repos/${username}/${repoName}/languages`,
-		{
-			Authorization: `Token ${auth}`,
-			"User-Agent": "request",
-		}
-	);
-	const languages = res.data;
-	return languages;
+  const res = await axios.get(
+    `https://api.github.com/repos/${username}/${repoName}/languages`,
+    {
+      Authorization: `Bearer ${auth}`,
+      "User-Agent": "request",
+    }
+  );
+  const languages = res.data;
+  return languages;
 };
 
 const getAllFiles = async (auth, username, repoName) => {
-	const res = await axios.get(
-		`https://api.github.com/repos/${username}/${repoName}/git/trees/main?recursive=1`,
-		{
-			headers: {
-				Authorization: `Token ${auth}`,
-				"User-Agent": "request",
-			},
-		}
-	);
-	const allFiles = [];
-	const files = res.data.tree;
-	await files.forEach(async (ele) => {
-		allFiles.push({ path: ele.path, url: ele.url });
-	});
-	return allFiles;
+  const res = await axios.get(
+    `https://api.github.com/repos/${username}/${repoName}/git/trees/main?recursive=1`,
+    {
+      headers: {
+        Authorization: `Bearer ${auth}`,
+        "User-Agent": "request",
+      },
+    }
+  );
+  const allFiles = [];
+  const files = res.data.tree;
+  await files.forEach(async (ele) => {
+    allFiles.push({ path: ele.path, url: ele.url });
+  });
+  return allFiles;
 };
 
 export const analyseRepo = async (auth, repoURL) => {
-	const splitURL = repoURL.split("/");
-	const username = splitURL[3];
-	const repoName = splitURL[4];
-	const allFiles = await getAllFiles(auth, username, repoName);
-	const readMeURL = allFiles.filter((ele) => {
-		if (ele.path.includes("README") || ele.path.includes("readme")) {
-			return ele;
-		}
-	})[0].url;
-	let readMeAnalysis = await getReadMeCrux(auth, readMeURL);
-	readMeAnalysis = await JSON.parse(
-		readMeAnalysis.replaceAll("`", "").replaceAll("json", "")
-	);
-	let repoLangs = await getRepoLanguages(auth, username, repoName);
-	let techStack = await getTechStack(auth, allFiles);
-	techStack = techStack.map((ele) => {
-		return JSON.parse(
-			ele.techStack.replaceAll("`", "").replaceAll("json", "")
-		);
-	});
-	// console.log("Extracted Info",{ readMeAnalysis, repoLangs, techStack });
-	return { readMeAnalysis, repoLangs, techStack };
+  const splitURL = repoURL.split("/");
+  const username = splitURL[3];
+  const repoName = splitURL[4];
+  const allFiles = await getAllFiles(auth, username, repoName);
+  const readMeURL = allFiles.filter((ele) => {
+    if (ele.path.includes("README") || ele.path.includes("readme")) {
+      return ele;
+    }
+  })[0].url;
+  let readMeAnalysis = await getReadMeCrux(auth, readMeURL);
+  console.log(readMeAnalysis);
+  readMeAnalysis = await JSON.parse(
+    readMeAnalysis
+      .replaceAll("`", "")
+      .replaceAll("json", "")
+      .replaceAll("'", '"')
+  );
+  let repoLangs = await getRepoLanguages(auth, username, repoName);
+  let techStack = await getTechStack(auth, allFiles);
+  console.log(techStack);
+  techStack = techStack.map((ele) => {
+    return JSON.parse(ele.techStack.replaceAll("`", "").replaceAll("json", ""));
+  });
+  // console.log("Extracted Info",{ readMeAnalysis, repoLangs, techStack });
+  return { readMeAnalysis, repoLangs, techStack };
 };
 
 // export const analyseRepo = async (auth, repoURL) => {

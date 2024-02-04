@@ -84,10 +84,18 @@ function sendToBackend(textContent) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ token: token, JD: textContent }),
-  }).catch((error) => {
-    console.error("Error sending data to backend:", error);
-  });
+    body: JSON.stringify({
+      token: "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",
+      JD: textContent,
+    }),
+  })
+    .then(async (res) => {
+      updatePopup(await res.json());
+      return;
+    })
+    .catch((error) => {
+      console.error("Error sending data to backend:", error);
+    });
 }
 
 function updatePopup(responseData) {

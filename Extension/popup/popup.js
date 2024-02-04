@@ -17,7 +17,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 // Function to update the popup content with the form
 function updatePopup(data) {
   const editFormContainer = document.getElementById("editFormContainer");
-
+  console.log("rednnf");
+  console.log(data);
   if (editFormContainer) {
     // Clear previous content
     editFormContainer.innerHTML = "";
@@ -82,13 +83,17 @@ function sendUpdatedDataToBackend(updatedData) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ updatedData: updatedData, token: token }),
+    body: JSON.stringify({
+      updatedData: updatedData,
+      token: "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",
+    }),
   })
-    .then((response) => {
+    .then(async (response) => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      return response.blob();
+      //   console.log(await response);
+      return await response.blob();
     })
     .then((blob) => {
       // Create a Blob URL for the PDF content
@@ -103,8 +108,9 @@ function sendUpdatedDataToBackend(updatedData) {
       // Add a Download PDF button
       const downloadButton = document.createElement("a");
       downloadButton.href = pdfUrl;
-      downloadButton.download = "resume.pdf";
+      downloadButton.download = "resume.tex";
       downloadButton.textContent = "Download Resume PDF";
+      downloadButton.click();
       document.body.appendChild(downloadButton);
     })
     .catch((error) => {
