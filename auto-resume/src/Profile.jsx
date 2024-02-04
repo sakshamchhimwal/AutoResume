@@ -18,8 +18,8 @@ const Profile = ({ userData }) => {
   const [options, setOptions] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [repoLoading, setRepoLoading] = useState(false);
 
-  console.log(selectedItems);
   const filteredOptions = options.filter((o) => !selectedItems.includes(o));
   useEffect(() => {
     fetchRepos();
@@ -55,7 +55,27 @@ const Profile = ({ userData }) => {
   const showModal = () => {
     setIsModalOpen(true);
   };
-  const handleOk = () => {
+  const handleOk = async () => {
+    // repos api
+    if (selectedItems.length === 3) {
+      // token, repoURL1, repoURL2, repoURL3
+      setRepoLoading(true);
+      let res = await fetch("http://localhost:3003/analyzer/analyse", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: localStorage.getItem("accessToken"),
+          repoURL1: selectedItems[0],
+          repoURL2: selectedItems[1],
+          repoURL3: selectedItems[2],
+        }),
+      });
+      setRepoLoading(false);
+    } else {
+      alert("Please select three repos");
+    }
     setIsModalOpen(false);
   };
   const handleCancel = () => {
@@ -64,18 +84,17 @@ const Profile = ({ userData }) => {
   const handleSubmitPress = async (e) => {
     e.preventDefault();
     const data = {
-      firstName,
+      name: firstName,
       lastName,
-      email,
-      phone,
+      emailAddress: email,
+      mobileNumber: phone,
       linkedinUrl,
       githubUrl,
-      degreeName,
-      gradYear,
-      collegeName,
+      degree: degreeName,
+      year: gradYear,
+      collegeName: collegeName,
       cpi,
       courses,
-      selectedItems,
     };
     if (
       firstName &&
@@ -87,10 +106,20 @@ const Profile = ({ userData }) => {
       gradYear &&
       collegeName &&
       cpi &&
-      courses &&
-      selectedItems.length === 3
+      courses
     ) {
-      console.log(data);
+      // registe api
+      let res = await fetch("http://localhost:3003/analyzer/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...data,
+          token: localStorage.getItem("accessToken"),
+        }),
+      });
+      console.log(res);
       showModal();
     }
   };
@@ -98,14 +127,53 @@ const Profile = ({ userData }) => {
   return (
     <div className="formbold-main-wrapper">
       <Modal
-        title="Basic Modal"
+        title="Choose your repos"
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
+        {repoLoading && (
+          <div className="loader">
+            <div className="bar1"></div>
+            <div className="bar2"></div>
+            <div className="bar3"></div>
+            <div className="bar4"></div>
+            <div className="bar5"></div>
+            <div className="bar6"></div>
+            <div className="bar7"></div>
+            <div className="bar8"></div>
+            <div className="bar9"></div>
+            <div className="bar10"></div>
+            <div className="bar11"></div>
+            <div className="bar12"></div>
+          </div>
+        )}
+        <div className="formbold-mb-3">
+          <label htmlFor="courses" className="formbold-form-label">
+            Repos :
+          </label>
+          <Select
+            mode="multiple"
+            placeholder="Select any three of your repos"
+            value={selectedItems}
+            onChange={(selectedValues) => {
+              // Check if the length exceeds three
+              if (selectedValues.length > 3) {
+                alert("Please select only three items.");
+              } else {
+                // Update the state if within the limit
+                setSelectedItems(selectedValues);
+              }
+            }}
+            style={{
+              width: "100%",
+            }}
+            options={filteredOptions.map((item) => ({
+              value: item.html_url,
+              label: item.name,
+            }))}
+          />
+        </div>
       </Modal>
       <div className="formbold-form-wrapper">
         <div
@@ -317,33 +385,6 @@ const Profile = ({ userData }) => {
               name="address"
               id="courses"
               className="formbold-form-input"
-            />
-          </div>
-
-          <div className="formbold-mb-3">
-            <label htmlFor="courses" className="formbold-form-label">
-              Repos :
-            </label>
-            <Select
-              mode="multiple"
-              placeholder="Select any three of your repos"
-              value={selectedItems}
-              onChange={(selectedValues) => {
-                // Check if the length exceeds three
-                if (selectedValues.length > 3) {
-                  alert("Please select only three items.");
-                } else {
-                  // Update the state if within the limit
-                  setSelectedItems(selectedValues);
-                }
-              }}
-              style={{
-                width: "100%",
-              }}
-              options={filteredOptions.map((item) => ({
-                value: item.html_url,
-                label: item.name,
-              }))}
             />
           </div>
 

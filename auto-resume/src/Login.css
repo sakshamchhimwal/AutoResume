@@ -13,6 +13,7 @@
     padding-top: 12px;
   }
   .formbold-main-wrapper {
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;

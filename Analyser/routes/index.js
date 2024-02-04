@@ -13,17 +13,17 @@ const __dirname = dirname(__filename);
 const router = express.Router();
 
 const doesUserExist = async (userName) => {
-	const user = await userModel.findOne({ username: userName });
-	if (user) {
-		return true;
-	} else {
-		return false;
-	}
+  const user = await userModel.findOne({ username: userName });
+  if (user) {
+    return true;
+  } else {
+    return false;
+  }
 };
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
-	res.render("index", { title: "Express" });
+  res.render("index", { title: "Express" });
 });
 
 router.post("/register", async (req, res, next) => {
@@ -54,59 +54,59 @@ router.post("/register", async (req, res, next) => {
 });
 
 router.post("/analyse", async (req, res, next) => {
-	const { token, repoURL1, repoURL2, repoURL3 } = req.body;
-	const userDetails = await getGitHubDetails(token);
-	const { login } = userDetails;
-	const userExist = await doesUserExist(login);
-	if (!userExist) {
-		return res.send({ message: "user does not exist" }).status(403);
-	}
-	const urls = [repoURL1, repoURL2, repoURL3];
-	const updates = [];
-	for (const url of urls) {
-		try {
-			const splitURL = url.split("/");
-			const repoName = splitURL[4];
-			const repoAnalysis = await analyseRepo(token, url);
-			const skills = [];
-			const projInsights = [];
-			repoAnalysis.readMeAnalysis.skills.forEach((ele) => {
-				skills.push(ele);
-			});
-			repoAnalysis.techStack.forEach((ele) => {
-				console.log(ele);
-				ele?.techStack?.forEach((ele) => {
-					skills.push(ele);
-				});
-			});
-			repoAnalysis.readMeAnalysis.features.forEach((ele) => {
-				projInsights.push(ele);
-			});
-			repoAnalysis.techStack.forEach((ele) => {
-				ele?.insights?.forEach((ins) => {
-					projInsights.push(ins);
-				});
-			});
-			console.log({ repoName, skills, projInsights });
-			const update = await userModel.findOneAndUpdate(
-				{ username: login },
-				{
-					$push: {
-						projects: {
-							skills: skills,
-							projectname: repoName,
-							projectdesc: projInsights,
-						},
-					},
-				}
-			);
-			updates.push(update);
-		} catch (err) {
-			console.log(err);
-			res.send({ message: "Error in parsing" });
-		}
-	}
-	res.send({ message: updates.toString() });
+  const { token, repoURL1, repoURL2, repoURL3 } = req.body;
+  const userDetails = await getGitHubDetails(token);
+  const { login } = userDetails;
+  const userExist = await doesUserExist(login);
+  if (!userExist) {
+    return res.send({ message: "user does not exist" }).status(403);
+  }
+  const urls = [repoURL1, repoURL2, repoURL3];
+  const updates = [];
+  for (const url of urls) {
+    try {
+      const splitURL = url.split("/");
+      const repoName = splitURL[4];
+      const repoAnalysis = await analyseRepo(token, url);
+      const skills = [];
+      const projInsights = [];
+      repoAnalysis.readMeAnalysis.skills.forEach((ele) => {
+        skills.push(ele);
+      });
+      repoAnalysis.techStack.forEach((ele) => {
+        console.log(ele);
+        ele?.techStack?.forEach((ele) => {
+          skills.push(ele);
+        });
+      });
+      repoAnalysis.readMeAnalysis.features.forEach((ele) => {
+        projInsights.push(ele);
+      });
+      repoAnalysis.techStack.forEach((ele) => {
+        ele?.insights?.forEach((ins) => {
+          projInsights.push(ins);
+        });
+      });
+      console.log({ repoName, skills, projInsights });
+      const update = await userModel.findOneAndUpdate(
+        { username: login },
+        {
+          $push: {
+            projects: {
+              skills: skills,
+              projectname: repoName,
+              projectdesc: projInsights,
+            },
+          },
+        }
+      );
+      updates.push(update);
+    } catch (err) {
+      console.log(err);
+      res.send({ message: "Error in parsing" });
+    }
+  }
+  res.send({ message: updates.toString() });
 });
 
 router.post("/build", async (req, res, next) => {
@@ -194,11 +194,11 @@ router.post("/make", async (req, res, next) => {
 });
 
 router.get("/test", async (req, res, next) => {
-	const analysedReadme = await analyseRepo(
-		process.env.GITHUB_PAN,
-		"https://github.com/otahina/PowerPoint-Generator-Python-Project"
-	);
-	return res.send(analysedReadme);
+  const analysedReadme = await analyseRepo(
+    process.env.GITHUB_PAN,
+    "https://github.com/otahina/PowerPoint-Generator-Python-Project"
+  );
+  return res.send(analysedReadme);
 });
 
 export default router;

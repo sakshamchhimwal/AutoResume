@@ -4,10 +4,10 @@
     "version": "1.0",
     "description": "Description of your extension",
     "icons": {
-        "128": "icons/logo.jpg"
+        "128": "icons/logo.png"
     },
     "browser_action": {
-        "default_icon": "icons/logo.jpg",
+        "default_icon": "icons/logo.png",
         "default_popup": "popup/popup.html"
     },
     "permissions": [
