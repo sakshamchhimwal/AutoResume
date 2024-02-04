@@ -3,6 +3,13 @@ import { analyseRepo } from "../services/analyseRepo.js";
 import userModel from "../models/user.js";
 import { getGitHubDetails } from "../utils/getGithubDetails.js";
 import { generateResume } from "../analysers/build.resume.js";
+import { writeFile } from "fs";
+import { replaceEle } from "../resumes/resume1/template.js";
+import { exec } from "node:child_process";
+import { fileURLToPath } from "url";
+import path, { dirname } from "path";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const router = express.Router();
 
 const doesUserExist = async (userName) => {
@@ -25,7 +32,17 @@ router.post("/register", async (req, res, next) => {
 		const userDetails = await getGitHubDetails(token);
 		const { login } = userDetails;
 		console.log(login);
-		const newUser = await userModel.create({ username: login });
+		const newUser = await userModel.create({
+			username: login,
+			name: req.body.name,
+			address: req.body.name,
+			address: req.body.address,
+			mobileNumber: req.body.mobileNumber,
+			emailAddress: req.body.email,
+			collegeName: req.body.email,
+			year: req.body.year,
+			degree: req.body.year,
+		});
 		if (newUser) {
 			return res.send({ message: "New user created successfuly" });
 		}
@@ -105,20 +122,76 @@ router.post("/build", async (req, res, next) => {
 			projectdesc.toString(),
 			skills.toString()
 		);
-		currResume = JSON.parse(currResume.replaceAll("`", "").replaceAll("json", ""));
+		currResume = JSON.parse(
+			currResume.replaceAll("`", "").replaceAll("json", "")
+		);
 		resume.push({
-			title:projectname,
-			technologies:currResume.skills,
-			points: currResume.projectDetails
+			title: projectname,
+			technologies: currResume.skills,
+			points: currResume.projectDetails,
 		});
 	}
 	console.log(resume);
 	return res.send({ projects: resume }).status(200);
 });
 
-router.post("/make",async (req,res,next)=>{
-	
-})
+router.post("/make", async (req, res, next) => {
+	const { updatedData, token } = req.body;
+	const { login } = await getGitHubDetails(token);
+	console.log(login);
+	const getAllDetails = await userModel.findOne({ username: login });
+	const replacement = {
+		name: getAllDetails.name,
+		address: getAllDetails.address,
+		mobileNumber: getAllDetails.mobileNumber,
+		email: getAllDetails.emailAddress,
+		collegeName: getAllDetails.collegeName,
+		year: getAllDetails.year,
+		degree: getAllDetails.degree,
+		projects: updatedData,
+	};
+	const op = replaceEle(
+		replacement.name,
+		replacement.address,
+		replacement.mobileNumber,
+		replacement.email,
+		replacement.collegeName,
+		replacement.year,
+		replacement.degree,
+		replacement.projects[0].title,
+		"",
+		replacement.projects[0].technologies.toString(),
+		replacement.projects[0].points
+			.map((ele) => {
+				return `\\item ${ele}`;
+			})
+			.toString(),
+		replacement.projects[1].title,
+		"",
+		replacement.projects[1].technologies.toString(),
+		replacement.projects[1].points
+			.map((ele) => {
+				return `\\item ${ele}`;
+			})
+			.toString(),
+		replacement.projects[2].title,
+		"",
+		replacement.projects[2].technologies.toString(),
+		replacement.projects[2].points
+			.map((ele) => {
+				return `\\item ${ele}`;
+			})
+			.toString()
+	);
+	const strData = op.toString();
+	writeFile("./resumes/resume1/temp.tex", strData, (err) => {
+		if (err) {
+			throw err;
+		}
+		console.log("Data has been written to file successfully.");
+		res.download("./resumes/resume1/temp.tex");
+	});
+});
 
 router.get("/test", async (req, res, next) => {
 	const analysedReadme = await analyseRepo(

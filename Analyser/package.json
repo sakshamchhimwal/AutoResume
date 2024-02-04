@@ -19,12 +19,17 @@
     "debug": "~2.6.9",
     "dotenv": "^16.4.1",
     "express": "~4.16.1",
+    "express-zip": "^3.0.0",
+    "fs": "^0.0.1-security",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
+    "jszip": "^3.10.1",
     "mongoose": "^8.1.1",
     "morgan": "~1.9.1",
+    "node-latex-pdf": "^0.0.2",
     "nodemon": "^3.0.3",
-    "octokit": "^3.1.2"
+    "octokit": "^3.1.2",
+    "replace-in-file": "^7.1.0"
   },
   "type": "module"
 }

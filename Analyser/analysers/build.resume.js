@@ -55,3 +55,4 @@ export async function generateResume(JD, PD, Skill) {
 	console.log(response.text());
 	return response.text();
 }
+
