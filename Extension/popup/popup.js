@@ -85,7 +85,7 @@ function sendUpdatedDataToBackend(updatedData) {
     },
     body: JSON.stringify({
       updatedData: updatedData,
-      token: "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",
+      token: token,
     }),
   })
     .then(async (response) => {

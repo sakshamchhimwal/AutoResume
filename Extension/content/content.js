@@ -85,7 +85,7 @@ function sendToBackend(textContent) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      token: "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",
+      token: token,
       JD: textContent,
     }),
   })
