@@ -28,7 +28,7 @@ const Profile = ({ userData }) => {
   const fetchRepos = async (e) => {
     try {
       const apiUrl = `http://localhost:8000/getRepos/${userData?.login}`;
-      const token = "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";
+      const token = "";
 
       const response = await fetch(apiUrl, {
         method: "GET",
