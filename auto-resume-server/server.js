@@ -1,5 +1,5 @@
-const CLIENT_ID = "a12b9b0d5b4c0a8f85b3";
-const CLIENT_SECRET = "05bfbcb314f7a7fbddfba5dc8c85cd8d707b5436";
+const CLIENT_ID = "";
+const CLIENT_SECRET = "";
 
 let express = require("express");
 let cors = require("cors");
